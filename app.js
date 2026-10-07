@@ -25,7 +25,7 @@ const stops = [
 ];
 const stopRoot = document.querySelector('#stops');
 stops.forEach(([time,title,description,tag,art], index) => {
- const stop = document.createElement('article'); stop.id = `stop-${index+1}`; stop.className='stop';
+ const stop = document.createElement('article'); stop.id = `stop-${index+1}`; stop.className=`stop stop-${art}`;
  stop.innerHTML=`<div class="stop-content"><div class="stop-number"><b>${String(index+1).padStart(2,'0')}</b>${time}</div><h3>${title}</h3><p>${description}</p><span class="tag">${tag}</span></div><button class="illustration" aria-label="Play animation for ${title}"><span class="tiny-star" aria-hidden="true">✦</span><svg viewBox="0 0 130 150" aria-hidden="true">${drawings[art]}</svg></button>`;
  stopRoot.append(stop);
  const link=document.createElement('a'); link.className='plan-item';link.href=`#${stop.id}`;link.innerHTML=`<span>${time}</span>${title}`;
@@ -37,7 +37,67 @@ const updateProgress=()=>{const total=document.documentElement.scrollHeight-inne
 addEventListener('scroll',updateProgress,{passive:true});addEventListener('resize',updateProgress);updateProgress();
 const plan=document.querySelector('#plan');document.querySelector('#open-plan').addEventListener('click',()=>plan.showModal());document.querySelector('#close-plan').addEventListener('click',()=>plan.close());
 plan.addEventListener('click',e=>{if(e.target===plan){const r=plan.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)plan.close()}});
-let sounds=false, audioContext;
-document.querySelector('#sound').addEventListener('click',e=>{sounds=!sounds;e.currentTarget.setAttribute('aria-pressed',sounds);e.currentTarget.innerHTML=`sound ${sounds?'on':'off'} <span>♫</span>`;if(sounds)chime()});
-function chime(){try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();audioContext.resume();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.connect(gain);gain.connect(audioContext.destination);osc.frequency.setValueAtTime(620,audioContext.currentTime);osc.frequency.exponentialRampToValueAtTime(940,audioContext.currentTime+.12);gain.gain.setValueAtTime(.04,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.25);osc.start();osc.stop(audioContext.currentTime+.26)}catch{}}
+// An original pentatonic instrumental, synthesized locally with no downloads.
+let sounds=false, startingMusic=false, audioContext, musicBus, musicTimer, nextBeat=0, beat=0;
+const voices=new Set();
+const musicButton=document.querySelector('#sound');
+const melody=[0,2,4,2,1,2,3,1,0,2,4,3,2,1,2,-1,4,3,2,1,2,4,3,2,1,0,1,2,3,2,0,-1];
+const scale=[261.63,293.66,329.63,392,440];
+function musicLabel(on){musicButton.setAttribute('aria-pressed',String(on));musicButton.setAttribute('aria-label',on?'Pause Nusantara-inspired music':'Play Nusantara-inspired music');musicButton.innerHTML=`music ${on?'on':'off'} <span>♫</span>`;}
+function tone(frequency,time,duration,volume,partials=[1,2.02,3.96]){
+ const bus=musicBus;
+ partials.forEach((ratio,i)=>{
+  const osc=audioContext.createOscillator(),gain=audioContext.createGain();
+  osc.type='sine';osc.frequency.setValueAtTime(frequency*ratio,time);
+  gain.gain.setValueAtTime(0,time);gain.gain.linearRampToValueAtTime(volume/(1+i*2),time+.012);
+  gain.gain.exponentialRampToValueAtTime(.0001,time+duration/(1+i*.3));
+  osc.connect(gain);gain.connect(bus);voices.add(osc);
+  osc.onended=()=>{voices.delete(osc);osc.disconnect();gain.disconnect()};
+  osc.start(time);osc.stop(time+duration+.03);
+ });
+}
+function scheduleMusic(){
+ if(!sounds||audioContext.state!=='running')return;
+ // Schedule a short buffer ahead so scrolling does not disturb the rhythm.
+ if(nextBeat<audioContext.currentTime)nextBeat=audioContext.currentTime+.04;
+ while(nextBeat<audioContext.currentTime+.22){
+  const note=melody[beat%melody.length];
+  if(note>=0)tone(scale[note]*2,nextBeat,1.1,.065,[1,2.76,5.4]);
+  if(beat%2===0)tone(scale[(Math.floor(beat/8)+2)%5],nextBeat+.02,1.4,.035,[1,2.01]);
+  if(beat%8===0)tone(beat%32===0?65.4:98,nextBeat,3.8,.09,[1,1.48,2.05,2.8]);
+  // A low, soft kendang-inspired pulse beneath the bell melody.
+  if(beat%4===0||beat%4===3){
+   const osc=audioContext.createOscillator(),gain=audioContext.createGain();
+   osc.frequency.setValueAtTime(130,nextBeat);osc.frequency.exponentialRampToValueAtTime(48,nextBeat+.15);
+   gain.gain.setValueAtTime(.045,nextBeat);gain.gain.exponentialRampToValueAtTime(.0001,nextBeat+.2);
+   osc.connect(gain);gain.connect(musicBus);voices.add(osc);
+   osc.onended=()=>{voices.delete(osc);osc.disconnect();gain.disconnect()};osc.start(nextBeat);osc.stop(nextBeat+.22);
+  }
+  beat++;nextBeat+=.375;
+ }
+}
+async function startMusic(){
+ if(sounds||startingMusic)return;
+ startingMusic=true;
+ try{
+  audioContext??=new (window.AudioContext||window.webkitAudioContext)();
+  await audioContext.resume();
+  if(audioContext.state!=='running')throw Error('Audio could not start');
+  musicBus=audioContext.createGain();musicBus.gain.setValueAtTime(.65,audioContext.currentTime);musicBus.connect(audioContext.destination);
+  sounds=true;beat=0;nextBeat=audioContext.currentTime+.04;musicLabel(true);scheduleMusic();musicTimer=setInterval(scheduleMusic,80);
+ }catch{sounds=false;musicLabel(false);musicButton.setAttribute('aria-label','Music unavailable. Tap to try again');}
+ finally{startingMusic=false;}
+}
+function stopMusic(){
+ sounds=false;clearInterval(musicTimer);musicTimer=null;musicLabel(false);
+ if(!audioContext||!musicBus)return;
+ const oldBus=musicBus,now=audioContext.currentTime;
+ oldBus.gain.cancelScheduledValues(now);oldBus.gain.setValueAtTime(oldBus.gain.value,now);oldBus.gain.linearRampToValueAtTime(0,now+.05);
+ for(const osc of voices){try{osc.stop(now+.06)}catch{}}
+ setTimeout(()=>oldBus.disconnect(),150);
+}
+musicButton.addEventListener('click',async()=>{musicButton.disabled=true;try{if(sounds)stopMusic();else await startMusic();}finally{musicButton.disabled=false;}});
+document.querySelector('.scroll-cue').addEventListener('click',()=>{if(!sounds)startMusic()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&sounds)stopMusic()});
+function chime(){if(sounds&&audioContext?.state==='running')tone(880,audioContext.currentTime,.3,.035,[1,2]);}
 document.querySelectorAll('.illustration').forEach(el=>el.addEventListener('click',e=>{if(sounds)chime();if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<5;i++){const p=document.createElement('span');p.className='confetti';p.textContent=['✦','✳','•'][i%3];p.style.left=`${e.clientX}px`;p.style.top=`${e.clientY}px`;p.style.color=['#dd6150','#244faa','#3b795b'][i%3];p.style.setProperty('--x',`${(i-2)*28}px`);document.body.append(p);setTimeout(()=>p.remove(),1100)}}));
