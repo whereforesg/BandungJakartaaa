@@ -6,6 +6,7 @@ const stops = data.stops.map(([time,title,description,tag,art],i) => `<article i
 const links = data.stops.map(([time,title],i)=>`<a class="plan-item" href="#stop-${i+1}"><span>${time}</span>${title}</a>`).join('\n');
 const runtime = source.slice(source.indexOf('const observer='));
 const html = fs.readFileSync('page.html','utf8')
+ .replace('assets/nusantara-loop.wav',()=>`data:audio/wav;base64,${fs.readFileSync('assets/nusantara-loop.wav').toString('base64')}`)
  .replace('<link rel="stylesheet" href="style.css">',()=>`<style>\n${fs.readFileSync('style.css','utf8')}\n</style>`)
  .replace('<div id="stops"></div>',()=>`<div id="stops">${stops}</div>`)
  .replace('<div id="plan-list"></div>',()=>`<div id="plan-list">${links}</div>`)

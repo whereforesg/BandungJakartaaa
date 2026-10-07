@@ -2,7 +2,7 @@
 
 A mobile-first, illustrated day-one team itinerary. Includes scroll reveals, an itinerary dialog with jump links, a journey progress bar, tap animations, optional sound, and reduced-motion support.
 
-“Let’s play” starts an original Nusantara-inspired instrumental and scrolls into the journey. The music uses local Web Audio synthesis with pentatonic bell tones, a soft melody, and gentle percussion; no external audio downloads are needed. The music button pauses or restarts it, and leaving the tab pauses playback. Airplanes float, stars twinkle, and route dashes move; reduced-motion preferences disable these animations.
+“Let’s play” starts an original Nusantara-inspired instrumental and scrolls into the journey. The original pentatonic bell melody and gentle percussion are rendered into `assets/nusantara-loop.wav` and embedded in the generated page. A native audio player provides visible playback controls and mobile media audio output; no external audio downloads are needed. The music button pauses or restarts it, and leaving the tab pauses playback. Airplanes float, stars twinkle, and route dashes move; reduced-motion preferences disable these animations.
 
 ## Run
 
