@@ -8,6 +8,7 @@
 </head>
 <body>
   <div class="paper-grain" aria-hidden="true"></div>
+  <div class="itinerary-shell">
   <header class="topbar"><a href="#top" class="brand">the trip club<span>✳</span></a><button id="sound" aria-label="Play Nusantara-inspired music" aria-pressed="false">music off <span>♫</span></button></header>
   <main id="top">
     <section class="hero">
@@ -15,9 +16,9 @@
       <div class="hero-spark s1">✳</div><div class="hero-spark s2">✦</div>
       <h1>Jakarta<br><span>& Bandung</span></h1>
       <div class="hero-plane" aria-hidden="true">✈</div>
-      <p>One team. Two cities.<br>A very good little adventure.</p><div class="music-note" id="music-status" role="status">♫ Tap play for a little Nusantara mood</div><audio id="background-music" class="music-player" controls loop preload="metadata" aria-label="Nusantara-inspired instrumental"><source src="assets/nusantara-loop.wav" type="audio/wav"></audio>
+      <p>One team. Two cities.<br>A very good little adventure.</p><div class="visually-hidden" id="music-status" role="status">Music is off.</div><audio id="background-music" hidden loop preload="metadata"><source src="assets/nusantara-loop.wav" type="audio/wav"></audio>
       <div class="ticket"><span>YOUR BOARDING PASS</span><strong>DAY 01</strong><div>SG <b>→</b> JKT <b>→</b> BDG</div><small>WORK HARD, WANDER A LITTLE</small></div>
-      <a class="scroll-cue" href="#journey">LET’S PLAY <span>↓</span></a>
+      <a class="scroll-cue" href="#journey">LET’S HIT THE ROAD <span>↓</span></a>
     </section>
     <section class="journey" id="journey" aria-label="Day one itinerary">
       <div class="route" aria-hidden="true"><svg viewBox="0 0 400 2800" preserveAspectRatio="none"><path class="river" d="M310 -30 C90 150 350 210 240 420 S50 550 165 780 S360 970 240 1160 S60 1330 160 1500 S350 1700 230 1890 S40 2040 160 2250 S350 2470 240 2840"/><path class="route-line" d="M310 -30 C90 150 350 210 240 420 S50 550 165 780 S360 970 240 1160 S60 1330 160 1500 S350 1700 230 1890 S40 2040 160 2250 S350 2470 240 2840"/></svg></div>
@@ -27,6 +28,18 @@
     <footer><span class="moon">☾</span><p>That’s a wrap on day one.</p><h2>Big day.<br>Sweet dreams.</h2><span class="footer-label">BANDUNG, INDONESIA · DAY 01</span><a href="#top">BACK TO THE BEGINNING ↑</a></footer>
   </main>
   <nav class="bottom-nav" aria-label="Journey controls"><span><i></i> DAY 01 <small> / ON THE MAP</small></span><button id="open-plan">The plan <span>↗</span></button><div class="progress" id="progress"></div></nav>
+  </div>
+  <dialog id="welcome" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+    <div class="welcome-card">
+      <span class="welcome-edition">THE TRIP CLUB · DAY 01</span>
+      <span class="welcome-star" aria-hidden="true">✦</span>
+      <div class="welcome-plane" aria-hidden="true">✈</div>
+      <h2 id="welcome-title">A little<br>adventure<br><em>awaits.</em></h2>
+      <p id="welcome-description">Jakarta & Bandung.<br>Come along for the ride.</p>
+      <button id="enter-journey" autofocus>Enter <span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 16 16 4M5 4h11v11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <small>♫ A little Nusantara music comes along, too.</small>
+    </div>
+  </dialog>
   <dialog id="plan"><div class="dialog-head"><div><small>THE POCKET VERSION</small><h2>Your day, at a glance.</h2></div><button id="close-plan" aria-label="Close itinerary">×</button></div><div id="plan-list"></div><p class="plan-note">Times are local to each stop. Travel durations are estimates. Unscheduled stops follow the sequence shown.</p></dialog>
   <script src="app.js"></script>
 </body>

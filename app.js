@@ -46,11 +46,11 @@ function musicLabel(on){
  musicButton.setAttribute('aria-pressed',String(on));
  musicButton.setAttribute('aria-label',on?'Pause Nusantara-inspired music':'Play Nusantara-inspired music');
  musicButton.innerHTML=`music ${on?'on':'off'} <span>♫</span>`;
- musicStatus.textContent=on?'♫ Nusantara mood · now playing':'♫ Tap play for a little Nusantara mood';
+ musicStatus.textContent=on?'Nusantara music is playing.':'Music is paused. Use the music button to play.';
 }
 async function startMusic(){
  try{await music.play();}
- catch{musicLabel(false);musicStatus.textContent='Tap the audio player below to start the music.';}
+ catch{musicLabel(false);musicStatus.textContent='Music could not start. Tap the music button to try again.';}
 }
 function stopMusic(){music.pause();}
 music.addEventListener('playing',()=>musicLabel(true));
@@ -60,4 +60,23 @@ music.addEventListener('error',()=>{musicLabel(false);musicStatus.textContent='M
 musicButton.addEventListener('click',()=>{if(music.paused)startMusic();else stopMusic();});
 document.querySelector('.scroll-cue').addEventListener('click',()=>{if(music.paused)startMusic()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMusic()});
+const welcome=document.querySelector('#welcome');
+const enterButton=document.querySelector('#enter-journey');
+let entered=false;
+function enterJourney(){
+ if(entered)return;
+ entered=true;enterButton.disabled=true;
+ // Playback starts inside the tap, before awaiting the visual transition.
+ startMusic();
+ welcome.classList.add('welcome-leaving');
+ document.body.classList.remove('journey-waiting');
+ const finish=()=>{welcome.close();document.querySelector('.hero h1').setAttribute('tabindex','-1');document.querySelector('.hero h1').focus({preventScroll:true});};
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)finish();
+ else setTimeout(finish,700);
+}
+enterButton.addEventListener('click',enterJourney);
+welcome.addEventListener('cancel',event=>{event.preventDefault();enterJourney()});
+document.body.classList.add('journey-waiting');
+welcome.showModal();
+
 document.querySelectorAll('.illustration').forEach(el=>el.addEventListener('click',e=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<5;i++){const p=document.createElement('span');p.className='confetti';p.textContent=['✦','✳','•'][i%3];p.style.left=`${e.clientX}px`;p.style.top=`${e.clientY}px`;p.style.color=['#dd6150','#244faa','#3b795b'][i%3];p.style.setProperty('--x',`${(i-2)*28}px`);document.body.append(p);setTimeout(()=>p.remove(),1100)}}));
