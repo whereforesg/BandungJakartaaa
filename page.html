@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6e9cb">
+  <title>The Great Little Getaway · Day 01</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="paper-grain" aria-hidden="true"></div>
+  <header class="topbar"><a href="#top" class="brand">the trip club<span>✳</span></a><button id="sound" aria-label="Toggle playful sounds" aria-pressed="false">sound off <span>♫</span></button></header>
+  <main id="top">
+    <section class="hero">
+      <div class="edition">A LITTLE WORK. A LITTLE WANDER.</div>
+      <div class="hero-spark s1">✳</div><div class="hero-spark s2">✦</div>
+      <h1>Jakarta<br><span>& Bandung</span></h1>
+      <div class="hero-plane" aria-hidden="true">✈</div>
+      <p>One team. Two cities.<br>A very good little adventure.</p>
+      <div class="ticket"><span>YOUR BOARDING PASS</span><strong>DAY 01</strong><div>SG <b>→</b> JKT <b>→</b> BDG</div><small>WORK HARD, WANDER A LITTLE</small></div>
+      <a class="scroll-cue" href="#journey">LET’S HIT THE ROAD <span>↓</span></a>
+    </section>
+    <section class="journey" id="journey" aria-label="Day one itinerary">
+      <div class="route" aria-hidden="true"><svg viewBox="0 0 400 2800" preserveAspectRatio="none"><path class="river" d="M310 -30 C90 150 350 210 240 420 S50 550 165 780 S360 970 240 1160 S60 1330 160 1500 S350 1700 230 1890 S40 2040 160 2250 S350 2470 240 2840"/><path class="route-line" d="M310 -30 C90 150 350 210 240 420 S50 550 165 780 S360 970 240 1160 S60 1330 160 1500 S350 1700 230 1890 S40 2040 160 2250 S350 2470 240 2840"/></svg></div>
+      <div class="chapter"><span>01 / THE JOURNEY BEGINS</span><h2>Up, up & away.</h2></div>
+      <div id="stops"></div>
+    </section>
+    <footer><span class="moon">☾</span><p>That’s a wrap on day one.</p><h2>Big day.<br>Sweet dreams.</h2><span class="footer-label">BANDUNG, INDONESIA · DAY 01</span><a href="#top">BACK TO THE BEGINNING ↑</a></footer>
+  </main>
+  <nav class="bottom-nav" aria-label="Journey controls"><span><i></i> DAY 01 <small> / ON THE MAP</small></span><button id="open-plan">The plan <span>↗</span></button><div class="progress" id="progress"></div></nav>
+  <dialog id="plan"><div class="dialog-head"><div><small>THE POCKET VERSION</small><h2>Your day, at a glance.</h2></div><button id="close-plan" aria-label="Close itinerary">×</button></div><div id="plan-list"></div><p class="plan-note">Times are local to each stop. Travel durations are estimates. Unscheduled stops follow the sequence shown.</p></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

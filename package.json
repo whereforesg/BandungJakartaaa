@@ -1,0 +1,11 @@
+{
+  "name": "jakarta-bandung-day-one",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node build.js && node server.js",
+    "start": "node build.js && node server.js",
+    "check": "node --check app.js && node --check server.js && node --check build.js",
+    "build": "node build.js"
+  }
+}
